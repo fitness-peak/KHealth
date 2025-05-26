@@ -366,6 +366,7 @@ actual class KHealth {
                     )
 
                     is KHPermission.SleepSession -> KHPermission.SleepSession(
+                        read = permission.read,  // Always return what was requested for read permissions
                         write = if (permission.write) {
                             store.authorizationStatusForType(ObjectType.Category.SleepSession).isGranted
                         } else false
