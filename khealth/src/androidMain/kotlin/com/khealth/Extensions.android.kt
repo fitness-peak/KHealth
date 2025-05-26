@@ -53,6 +53,7 @@ import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.Vo2MaxRecord
 import androidx.health.connect.client.records.WeightRecord
 import androidx.health.connect.client.records.WheelchairPushesRecord
+import androidx.health.connect.client.records.metadata.Metadata
 import androidx.health.connect.client.units.BloodGlucose
 import androidx.health.connect.client.units.Energy
 import androidx.health.connect.client.units.Length
@@ -894,8 +895,10 @@ internal fun KHPermission.toRecordClass(): KClass<out Record>? = when (this) {
 }
 
 internal fun KHRecord.toHCRecord(): Record? {
+    val metadata = Metadata.manualEntry()
     return when (this) {
         is KHRecord.ActiveCaloriesBurned -> ActiveCaloriesBurnedRecord(
+            metadata = metadata,
             startTime = startTime.toJavaInstant(),
             endTime = endTime.toJavaInstant(),
             startZoneOffset = null,
@@ -904,18 +907,21 @@ internal fun KHRecord.toHCRecord(): Record? {
         )
 
         is KHRecord.BasalMetabolicRate -> BasalMetabolicRateRecord(
+            metadata = metadata,
             time = time.toJavaInstant(),
             zoneOffset = null,
             basalMetabolicRate = unit.left toNativePowerFor value,
         )
 
         is KHRecord.BloodGlucose -> BloodGlucoseRecord(
+            metadata = metadata,
             time = time.toJavaInstant(),
             zoneOffset = null,
             level = unit toNativeBloodGlucoseFor value,
         )
 
         is KHRecord.BloodPressure -> BloodPressureRecord(
+            metadata = metadata,
             time = time.toJavaInstant(),
             zoneOffset = null,
             systolic = unit toNativePressureFor systolicValue,
@@ -923,30 +929,35 @@ internal fun KHRecord.toHCRecord(): Record? {
         )
 
         is KHRecord.BodyFat -> BodyFatRecord(
+            metadata = metadata,
             time = time.toJavaInstant(),
             zoneOffset = null,
             percentage = percentage.percent,
         )
 
         is KHRecord.BodyTemperature -> BodyTemperatureRecord(
+            metadata = metadata,
             time = time.toJavaInstant(),
             zoneOffset = null,
             temperature = unit toNativeTemperatureFor value
         )
 
         is KHRecord.BodyWaterMass -> BodyWaterMassRecord(
+            metadata = metadata,
             time = time.toJavaInstant(),
             zoneOffset = null,
             mass = unit toNativeMassFor value
         )
 
         is KHRecord.BoneMass -> BoneMassRecord(
+            metadata = metadata,
             time = time.toJavaInstant(),
             zoneOffset = null,
             mass = unit toNativeMassFor value
         )
 
         is KHRecord.CervicalMucus -> CervicalMucusRecord(
+            metadata = metadata,
             time = time.toJavaInstant(),
             zoneOffset = null,
             appearance = when (appearance) {
@@ -959,6 +970,7 @@ internal fun KHRecord.toHCRecord(): Record? {
         )
 
         is KHRecord.CyclingPedalingCadence -> CyclingPedalingCadenceRecord(
+            metadata = metadata,
             startTime = startTime.toJavaInstant(),
             startZoneOffset = null,
             endTime = endTime.toJavaInstant(),
@@ -974,6 +986,7 @@ internal fun KHRecord.toHCRecord(): Record? {
         is KHRecord.CyclingSpeed -> null
 
         is KHRecord.Distance -> DistanceRecord(
+            metadata = metadata,
             startTime = startTime.toJavaInstant(),
             startZoneOffset = null,
             endTime = endTime.toJavaInstant(),
@@ -982,6 +995,7 @@ internal fun KHRecord.toHCRecord(): Record? {
         )
 
         is KHRecord.ElevationGained -> ElevationGainedRecord(
+            metadata = metadata,
             startTime = startTime.toJavaInstant(),
             startZoneOffset = null,
             endTime = endTime.toJavaInstant(),
@@ -991,6 +1005,7 @@ internal fun KHRecord.toHCRecord(): Record? {
 
         is KHRecord.Exercise -> type.toNativeExerciseTypeOrNull()?.let { exerciseType ->
             ExerciseSessionRecord(
+                metadata = metadata,
                 startTime = startTime.toJavaInstant(),
                 startZoneOffset = null,
                 endTime = endTime.toJavaInstant(),
@@ -1000,6 +1015,7 @@ internal fun KHRecord.toHCRecord(): Record? {
         }
 
         is KHRecord.FloorsClimbed -> FloorsClimbedRecord(
+            metadata = metadata,
             startTime = startTime.toJavaInstant(),
             startZoneOffset = null,
             endTime = endTime.toJavaInstant(),
@@ -1008,6 +1024,7 @@ internal fun KHRecord.toHCRecord(): Record? {
         )
 
         is KHRecord.HeartRate -> HeartRateRecord(
+            metadata = metadata,
             startTime = samples.first().time.toJavaInstant(),
             startZoneOffset = null,
             endTime = samples.last().time.toJavaInstant(),
@@ -1021,18 +1038,21 @@ internal fun KHRecord.toHCRecord(): Record? {
         )
 
         is KHRecord.HeartRateVariability -> HeartRateVariabilityRmssdRecord(
+            metadata = metadata,
             time = time.toJavaInstant(),
             zoneOffset = null,
             heartRateVariabilityMillis = heartRateVariabilityMillis
         )
 
         is KHRecord.Height -> HeightRecord(
+            metadata = metadata,
             time = time.toJavaInstant(),
             zoneOffset = null,
             height = unit toNativeLengthFor value,
         )
 
         is KHRecord.Hydration -> HydrationRecord(
+            metadata = metadata,
             startTime = startTime.toJavaInstant(),
             startZoneOffset = null,
             endTime = endTime.toJavaInstant(),
@@ -1041,17 +1061,20 @@ internal fun KHRecord.toHCRecord(): Record? {
         )
 
         is KHRecord.IntermenstrualBleeding -> IntermenstrualBleedingRecord(
+            metadata = metadata,
             time = time.toJavaInstant(),
             zoneOffset = null
         )
 
         is KHRecord.LeanBodyMass -> LeanBodyMassRecord(
+            metadata = metadata,
             time = time.toJavaInstant(),
             zoneOffset = null,
             mass = unit toNativeMassFor value,
         )
 
         is KHRecord.MenstruationPeriod -> MenstruationPeriodRecord(
+            metadata = metadata,
             startTime = startTime.toJavaInstant(),
             startZoneOffset = null,
             endTime = endTime.toJavaInstant(),
@@ -1059,6 +1082,7 @@ internal fun KHRecord.toHCRecord(): Record? {
         )
 
         is KHRecord.MenstruationFlow -> MenstruationFlowRecord(
+            metadata = metadata,
             time = time.toJavaInstant(),
             zoneOffset = null,
             flow = when (type) {
@@ -1070,6 +1094,7 @@ internal fun KHRecord.toHCRecord(): Record? {
         )
 
         is KHRecord.Nutrition -> NutritionRecord(
+            metadata = metadata,
             name = name,
             startTime = startTime.toJavaInstant(),
             startZoneOffset = null,
@@ -1117,6 +1142,7 @@ internal fun KHRecord.toHCRecord(): Record? {
         )
 
         is KHRecord.OvulationTest -> OvulationTestRecord(
+            metadata = metadata,
             time = time.toJavaInstant(),
             zoneOffset = null,
             result = when (result) {
@@ -1128,12 +1154,14 @@ internal fun KHRecord.toHCRecord(): Record? {
         )
 
         is KHRecord.OxygenSaturation -> OxygenSaturationRecord(
+            metadata = metadata,
             time = time.toJavaInstant(),
             zoneOffset = null,
             percentage = percentage.percent
         )
 
         is KHRecord.Power -> PowerRecord(
+            metadata = metadata,
             startTime = samples.first().time.toJavaInstant(),
             startZoneOffset = null,
             endTime = samples.last().time.toJavaInstant(),
@@ -1147,12 +1175,14 @@ internal fun KHRecord.toHCRecord(): Record? {
         )
 
         is KHRecord.RespiratoryRate -> RespiratoryRateRecord(
+            metadata = metadata,
             time = time.toJavaInstant(),
             zoneOffset = null,
             rate = rate
         )
 
         is KHRecord.RestingHeartRate -> RestingHeartRateRecord(
+            metadata = metadata,
             time = time.toJavaInstant(),
             zoneOffset = null,
             beatsPerMinute = beatsPerMinute,
@@ -1161,6 +1191,7 @@ internal fun KHRecord.toHCRecord(): Record? {
         is KHRecord.RunningSpeed -> null
 
         is KHRecord.SexualActivity -> SexualActivityRecord(
+            metadata = metadata,
             time = time.toJavaInstant(),
             zoneOffset = null,
             protectionUsed = if (didUseProtection) SexualActivityRecord.PROTECTION_USED_PROTECTED
@@ -1168,6 +1199,7 @@ internal fun KHRecord.toHCRecord(): Record? {
         )
 
         is KHRecord.SleepSession -> SleepSessionRecord(
+            metadata = metadata,
             startTime = samples.first().startTime.toJavaInstant(),
             startZoneOffset = null,
             endTime = samples.last().endTime.toJavaInstant(),
@@ -1191,6 +1223,7 @@ internal fun KHRecord.toHCRecord(): Record? {
         )
 
         is KHRecord.Speed -> SpeedRecord(
+            metadata = metadata,
             startTime = samples.first().time.toJavaInstant(),
             startZoneOffset = null,
             endTime = samples.last().time.toJavaInstant(),
@@ -1204,6 +1237,7 @@ internal fun KHRecord.toHCRecord(): Record? {
         )
 
         is KHRecord.StepCount -> StepsRecord(
+            metadata = metadata,
             startTime = startTime.toJavaInstant(),
             startZoneOffset = null,
             endTime = endTime.toJavaInstant(),
@@ -1212,18 +1246,21 @@ internal fun KHRecord.toHCRecord(): Record? {
         )
 
         is KHRecord.Vo2Max -> Vo2MaxRecord(
+            metadata = metadata,
             time = time.toJavaInstant(),
             zoneOffset = null,
             vo2MillilitersPerMinuteKilogram = vo2MillilitersPerMinuteKilogram,
         )
 
         is KHRecord.Weight -> WeightRecord(
+            metadata = metadata,
             time = time.toJavaInstant(),
             zoneOffset = null,
             weight = unit toNativeMassFor value,
         )
 
         is KHRecord.WheelChairPushes -> WheelchairPushesRecord(
+            metadata = metadata,
             startTime = startTime.toJavaInstant(),
             startZoneOffset = null,
             endTime = endTime.toJavaInstant(),
