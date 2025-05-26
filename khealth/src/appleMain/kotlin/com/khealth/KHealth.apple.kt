@@ -1509,7 +1509,7 @@ actual class KHealth {
                         is KHReadRequest.BoneMass -> Unit
 
                         is KHReadRequest.CervicalMucus ->
-                            addAll(quantitySamplesFor(ObjectType.Category.CervicalMucus))
+                            addAll(categorySamplesFor(ObjectType.Category.CervicalMucus))
 
                         is KHReadRequest.CyclingPedalingCadence -> Unit
 
@@ -1539,13 +1539,13 @@ actual class KHealth {
                             addAll(quantitySamplesFor(ObjectType.Quantity.Hydration))
 
                         is KHReadRequest.IntermenstrualBleeding ->
-                            addAll(quantitySamplesFor(ObjectType.Category.IntermenstrualBleeding))
+                            addAll(categorySamplesFor(ObjectType.Category.IntermenstrualBleeding))
 
                         is KHReadRequest.LeanBodyMass ->
                             addAll(quantitySamplesFor(ObjectType.Quantity.LeanBodyMass))
 
                         is KHReadRequest.MenstruationFlow ->
-                            addAll(quantitySamplesFor(ObjectType.Category.MenstruationFlow))
+                            addAll(categorySamplesFor(ObjectType.Category.MenstruationFlow))
 
                         is KHReadRequest.MenstruationPeriod -> Unit
 
@@ -1593,7 +1593,7 @@ actual class KHealth {
                         )
 
                         is KHReadRequest.OvulationTest ->
-                            addAll(quantitySamplesFor(ObjectType.Category.OvulationTest))
+                            addAll(categorySamplesFor(ObjectType.Category.OvulationTest))
 
                         is KHReadRequest.OxygenSaturation ->
                             addAll(quantitySamplesFor(ObjectType.Quantity.OxygenSaturation))
@@ -1611,10 +1611,10 @@ actual class KHealth {
                             addAll(quantitySamplesFor(ObjectType.Quantity.RunningSpeed))
 
                         is KHReadRequest.SexualActivity ->
-                            addAll(quantitySamplesFor(ObjectType.Category.SexualActivity))
+                            addAll(categorySamplesFor(ObjectType.Category.SexualActivity))
 
                         is KHReadRequest.SleepSession ->
-                            addAll(quantitySamplesFor(ObjectType.Category.SleepSession))
+                            addAll(categorySamplesFor(ObjectType.Category.SleepSession))
 
                         is KHReadRequest.Speed -> Unit
 
@@ -2099,6 +2099,42 @@ actual class KHealth {
                         error.logToConsole(type)
                         continuation.resume(
                             data?.filterIsInstance<HKSample>()?.filterNot { it is HKCategorySample }
+                        )
+                    }
+                )
+            }
+        }
+    }
+
+    @OptIn(UnsafeNumber::class)
+    private suspend fun KHReadRequest.categorySamplesFor(
+        vararg hkObjectTypes: HKSampleType
+    ): List<List<HKSample>?> {
+        val predicate = HKQuery.predicateForSamplesWithStartDate(
+            startDate = this.startDateTime.toNSDate(),
+            endDate = this.endDateTime.toNSDate(),
+            options = HKQueryOptionStrictStartDate
+        )
+        val limit = HKObjectQueryNoLimit
+        val sortDescriptors = listOf(
+            NSSortDescriptor.sortDescriptorWithKey(
+                HKSampleSortIdentifierStartDate,
+                ascending = false
+            )
+        )
+
+        return hkObjectTypes.map { type ->
+            suspendCoroutine { continuation ->
+                store.executeQuery(
+                    HKSampleQuery(
+                        sampleType = type,
+                        predicate = predicate,
+                        limit = limit,
+                        sortDescriptors = sortDescriptors,
+                    ) { _, data, error ->
+                        error.logToConsole(type)
+                        continuation.resume(
+                            data?.filterIsInstance<HKCategorySample>()
                         )
                     }
                 )
